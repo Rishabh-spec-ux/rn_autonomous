@@ -14,8 +14,9 @@ Launched Controllers:
 """
 
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, RegisterEventHandler, TimerAction
+from launch.actions import RegisterEventHandler, TimerAction
 from launch.event_handlers import OnProcessExit
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -28,16 +29,18 @@ def generate_launch_description():
         LaunchDescription: Launch description containing sequenced controller starts
     """
     # Start mecanum drive controller
-    start_mecanum_drive_controller_cmd = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'mecanum_drive_controller'],
+    start_mecanum_drive_controller_cmd = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['mecanum_drive_controller', '--controller-manager', '/controller_manager'],
         output='screen'
     )
 
     # Start joint state broadcaster
-    start_joint_state_broadcaster_cmd = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_state_broadcaster'],
+    start_joint_state_broadcaster_cmd = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
         output='screen'
     )
 
